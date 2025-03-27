@@ -1,0 +1,10 @@
+sentence_transformers
+rouge_score
+detoxify
+bert_score
+pypdf
+evaluate==0.4.3
+datasets==3.3.2
+ragas
+dspy
+numpy<2.0
