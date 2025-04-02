@@ -166,8 +166,8 @@ def QA_Ben(method,region,model_id,judge_model_id,model_kwargs,prompt_template,vd
     elapsed_time_list = []
     output_token_list = []
     output_tpot_list = []
-    cache_input_token_list = []
-    cache_output_token_list = []
+    cache_read_input_token_list = []
+    cache_write_input_token_list = []
 
     response_text_list = []
     context_text_list = []
@@ -190,7 +190,7 @@ def QA_Ben(method,region,model_id,judge_model_id,model_kwargs,prompt_template,vd
         wrapper_store_faiss_general = VectorStoreIndexWrapper(vectorstore=vectorstore_faiss_general)
         
         # vectordb search
-        SEARCH_K = 5
+        SEARCH_K = 10
         retriever = vectorstore_faiss_general.as_retriever(search_kwargs={
             'k': SEARCH_K,
         })
@@ -226,7 +226,7 @@ def QA_Ben(method,region,model_id,judge_model_id,model_kwargs,prompt_template,vd
                     #print(context_text)
                     contexts.append(context_text)
                     
-                llm_response_org, elapsed_time, input_token, output_token, output_tpot, cache_input_token, cache_output_token = QA_Text(method,
+                llm_response_org, elapsed_time, input_token, output_token, output_tpot, cache_read_input_token, cache_write_input_token = QA_Text(method,
                                                                                                  region,
                                                                                                  model_id,
                                                                                       model_kwargs,
@@ -252,6 +252,8 @@ def QA_Ben(method,region,model_id,judge_model_id,model_kwargs,prompt_template,vd
                 elapsed_time_list.append(elapsed_time)
                 output_token_list.append(output_token)
                 output_tpot_list.append(output_tpot)
+                cache_read_input_token_list.append(cache_read_input_token)
+                cache_write_input_token_list.append(cache_write_input_token)
         
                 response_text_list.append(llm_response)
                 question_text_list.append(question_org_list[i])
@@ -299,13 +301,12 @@ def QA_Ben(method,region,model_id,judge_model_id,model_kwargs,prompt_template,vd
         
         # Merge and save
         df_output = pd.concat([df_output, df_ragas], axis=1)
+        
         df_output.to_csv('./results/'+OUTPUT_FILE, index=False)
         Ben_Res2S3(s3_bucket,OUTPUT_FILE,BENCH_KEY,task_folder)        
 
     except Exception as e:
         print(f"\n\nAn error occurred: {e}. Please try again...")
     else:
-        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), r1, avg_ss_score, bert_f1, tox1, np.mean(ragas_result['answer_correctness']), np.mean(ragas_result['semantic_similarity']), np.mean(ragas_result['answer_relevancy']), np.mean(ragas_result['context_recall']), np.mean(ragas_result['context_precision']), np.sum(cost_list), np.sum(cache_input_token_list), np.sum(cache_output_token_list)
-
-
+        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), r1, avg_ss_score, bert_f1, tox1, np.mean(ragas_result['answer_correctness']), np.mean(ragas_result['semantic_similarity']), np.mean(ragas_result['answer_relevancy']), np.mean(ragas_result['context_recall']), np.mean(ragas_result['context_precision']), np.sum(cost_list), np.sum(cache_read_input_token_list), np.sum(cache_write_input_token_list)    
 

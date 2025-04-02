@@ -59,8 +59,8 @@ def Summ_Ben(method,region,model_id,jm1,jm2,model_kwargs,prompt_template,s3_buck
     elapsed_time_list = []
     output_token_list = []
     output_tpot_list = []
-    cache_input_token_list = []
-    cache_output_token_list = []
+    cache_read_input_token_list = []
+    cache_write_input_token_list = []
 
     response_text_list = []
     document_text_list = []
@@ -97,7 +97,7 @@ def Summ_Ben(method,region,model_id,jm1,jm2,model_kwargs,prompt_template,s3_buck
                 print(j,'-',i,end='|')  
                 pp_list.append(str(j))
                 
-                llm_response, elapsed_time, input_token, output_token, output_tpot, cache_input_token, cache_output_token = Summ_Text(method,region,
+                llm_response, elapsed_time, input_token, output_token, output_tpot, cache_read_input_token, cache_write_input_token = Summ_Text(method,region,
                                                                                                model_id,
                                                                                     model_kwargs,
                                                                                     prompt_template,
@@ -114,6 +114,8 @@ def Summ_Ben(method,region,model_id,jm1,jm2,model_kwargs,prompt_template,s3_buck
                 elapsed_time_list.append(elapsed_time)
                 output_token_list.append(output_token)
                 output_tpot_list.append(output_tpot)
+                cache_read_input_token_list.append(cache_read_input_token)
+                cache_write_input_token_list.append(cache_write_input_token)
         
                 response_text_list.append(llm_response)
                 document_text_list.append(section_text_list[i])
@@ -159,6 +161,6 @@ def Summ_Ben(method,region,model_id,jm1,jm2,model_kwargs,prompt_template,s3_buck
     except Exception as e:
         print(f"\n\nAn error occurred: {e}. Please try again...")
     else:
-        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), r1, avg_ss_score, bert_f1, np.average(lj_score_list), tox1, np.sum(cost_list), np.sum(cache_input_token_list), np.sum(cache_output_token_list)
+        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), r1, avg_ss_score, bert_f1, np.average(lj_score_list), tox1, np.sum(cost_list), np.sum(cache_read_input_token_list), np.sum(cache_write_input_token_list) 
     
 

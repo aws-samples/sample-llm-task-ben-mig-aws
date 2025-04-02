@@ -203,14 +203,14 @@ def LLM_Text_Bedrock_Conv_Infer(region,model_id,model_kwargs,prompt,cacheconf="d
     if cacheconf=="default":
         messages.append({
             "role": "user",
-            "content": [{"text": prompt,"cachePoint": {"type": cacheconf}}]
+            "content": [{'text': prompt},
+                         {'cachePoint': {'type': 'default'}}]
         })
     else:
         messages.append({
             "role": "user",
             "content": [{"text": prompt,}]
         })
-        
 
     st = time.time()
 
@@ -234,21 +234,31 @@ def LLM_Text_Bedrock_Conv_Infer(region,model_id,model_kwargs,prompt,cacheconf="d
         
 
     et = time.time()
-    elapsed_time = et - st
+    if("latencyMs" in response['metrics']):
+        elapsed_time = response['metrics']['latencyMs']/1000
+    else:
+        elapsed_time = et - st
+    #print("latency:",elapsed_time)
 
     llm_response = response['output']['message']['content'][0]['text']
     
     token_usage = response['usage']
     input_token = token_usage['inputTokens']
     output_token = token_usage['outputTokens']
-    #cache_input_token = token_usage["cacheReadInputTokenCount"]
-    #cache_input_token = token_usage["cacheWriteInputTokenCount"]
-    cache_input_token = 0
-    cache_output_token = 0
+    total_token = token_usage['totalTokens']
+    #print("Input/output/total token:",input_token,output_token,total_token)
+
+    if("cacheReadInputTokens" in token_usage and "cacheWriteInputTokens" in token_usage):
+        cache_read_input_token = token_usage["cacheReadInputTokens"]
+        cache_write_input_token = token_usage["cacheWriteInputTokens"]
+    else:
+        cache_read_input_token = 0
+        cache_write_input_token = 0
+    #print("Caching:",cache_read_input_token,cache_write_input_token)
 
     throuput = output_token/elapsed_time
 
-    return llm_response, elapsed_time, input_token, output_token, throuput, cache_input_token, cache_output_token
+    return llm_response, elapsed_time, input_token, output_token, throuput, cache_read_input_token, cache_write_input_token
 
 
 #-------- LLM inference by Bedrock --------

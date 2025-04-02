@@ -44,8 +44,8 @@ def PromptEval_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket
     elapsed_time_list = []
     output_token_list = []
     output_tpot_list = []
-    cache_input_token_list = []
-    cache_output_token_list = []
+    cache_read_input_token_list = []
+    cache_write_input_token_list = []
 
     response_text_list = []
     prompt_text_list = []
@@ -74,7 +74,7 @@ def PromptEval_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket
             for i in range(BATCH_NUM): 
                 print(i,end='|')
                 pp_list.append(str(j))                
-                llm_response, elapsed_time, input_token, output_token, output_tpot, cache_input_token, cache_output_token = PromptEval_Text(method,
+                llm_response, elapsed_time, input_token, output_token, output_tpot, cache_read_input_token, cache_write_input_token = PromptEval_Text(method,
                                                                                                         region,
                                                                                                         model_id,
                                                                                             model_kwargs,
@@ -93,8 +93,8 @@ def PromptEval_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket
                 elapsed_time_list.append(elapsed_time)
                 output_token_list.append(output_token)
                 output_tpot_list.append(output_tpot)
-                cache_input_token_list.append(cache_input_token) 
-                cache_output_token_list.append(cache_output_token)
+                cache_read_input_token_list.append(cache_read_input_token)
+                cache_write_input_token_list.append(cache_write_input_token)
     
                 response_text_list.append(llm_response)
                 prompt = prompt_template.format(inputs=inputs_list[i])
@@ -113,8 +113,8 @@ def PromptEval_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket
         df_output["input_token"] = input_token_list
         df_output["output_token"] = output_token_list
         df_output["elapsed_time"] = elapsed_time_list
-        df_output["cache_input_token"] = cache_input_token_list
-        df_output["cache_output_token"] = cache_output_token_list
+        df_output["cache_input_token"] = cache_read_input_token_list
+        df_output["cache_output_token"] = cache_write_input_token_list
         
         df_output.to_csv('./results/'+OUTPUT_FILE, index=False)
         
@@ -126,8 +126,8 @@ def PromptEval_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket
         return_list.append(np.sum(output_token_list))
         return_list.append(np.sum(output_tpot_list)) 
         return_list.append(np.sum(cost_list))
-        return_list.append(np.sum(cache_input_token_list))
-        return_list.append(np.sum(cache_output_token_list))
+        return_list.append(np.sum(cache_read_input_token_list))
+        return_list.append(np.sum(cache_write_input_token_list))
 
     except Exception as e:
         print(f"\n\nAn error occurred: {e}. Please try again...")

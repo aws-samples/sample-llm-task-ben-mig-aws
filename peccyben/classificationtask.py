@@ -52,8 +52,8 @@ def Class_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket,file
     elapsed_time_list = []
     output_token_list = []
     output_tpot_list = []
-    cache_input_token_list = []
-    cache_output_token_list = []
+    cache_read_input_token_list = []
+    cache_write_input_token_list = []
 
     response_text_list = []
     transcript_text_list = []
@@ -91,7 +91,7 @@ def Class_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket,file
             for i in range(BATCH_NUM): 
                 print(j,'-',i,end='|')  
                 pp_list.append(str(j))
-                llm_response_org, elapsed_time, input_token, output_token, output_tpot, cache_input_token, cache_output_token = Class_Text(method,
+                llm_response_org, elapsed_time, input_token, output_token, output_tpot, cache_read_input_token, cache_write_input_token = Class_Text(method,
                                                                                                     region,
                                                                                                     model_id,
                                                                                     model_kwargs,
@@ -121,8 +121,8 @@ def Class_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket,file
                 elapsed_time_list.append(elapsed_time)
                 output_token_list.append(output_token)
                 output_tpot_list.append(output_tpot)
-                cache_input_token_list.append(cache_input_token) 
-                cache_output_token_list.append(cache_output_token)
+                cache_read_input_token_list.append(cache_read_input_token)
+                cache_write_input_token_list.append(cache_write_input_token)
         
                 response_text_list.append(llm_response)
                 transcript_text_list.append(transcript_list[i])
@@ -165,6 +165,6 @@ def Class_Ben(method,region,model_id,model_kwargs,prompt_template,s3_bucket,file
     except Exception as e:
         print(f"\n\nAn error occurred: {e}. Please try again...")
     else:
-        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), acc, bert_p, bert_r, bert_f1, tox1, np.sum(cost_list), np.sum(cache_input_token_list), np.sum(cache_output_token_list)
+        return np.sum(elapsed_time_list), np.sum(input_token_list), np.sum(output_token_list), np.sum(output_tpot_list), acc, bert_p, bert_r, bert_f1, tox1, np.sum(cost_list), np.sum(cache_read_input_token_list), np.sum(cache_write_input_token_list) 
 
 
