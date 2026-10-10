@@ -4,7 +4,7 @@ detoxify
 bert_score
 pypdf
 evaluate==0.4.3
-datasets==3.3.2
+datasets==5.0.1
 ragas
 dspy
 numpy<2.0
